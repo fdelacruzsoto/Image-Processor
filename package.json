@@ -1,0 +1,25 @@
+{
+  "name": "image-processor",
+  "version": "1.0.0",
+  "description": "Process image geodata ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "image",
+    "geodata",
+    "dron",
+    "EXIF"
+  ],
+  "author": "Fernando de la Cruz",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^5.11.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  },
+  "dependencies": {
+    "node-cron": "^2.0.3"
+  }
+}
