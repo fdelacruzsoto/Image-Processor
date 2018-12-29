@@ -85,3 +85,7 @@ typings/
 .dynamodb/
 
 # End of https://www.gitignore.io/api/node
+
+# Ignore the local images folder since it is too big
+images/
+.DS_Store
