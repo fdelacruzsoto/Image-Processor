@@ -1,3 +1,4 @@
+const exif = require('fast-exif');
 const fs = require('fs');
 // const cron = require('node-cron');
 const { promisify } = require('util');
@@ -36,12 +37,32 @@ const sanitizeFileList = (files) => {
 };
 
 /**
+ * Loops trough each one of the images and get the exif data for each one.
+ * An object is created with the picture name and the gps data associated
+ * with the image.
+ * @param images Images to get exif data from
+ * @returns {Array} imgs The images and its gps data
+ */
+const getExifData = async (images) => {
+  const exifPromises = images.map(async (img) => {
+    const exifData = await exif.read(`${FILES_PATH}/${img}`);
+    return {
+      img,
+      gps: exifData.gps,
+    };
+  });
+  const results = await Promise.all(exifPromises);
+  return results;
+};
+
+/**
  * Main function used to start processing the images.
  */
 const startProcessing = async () => {
   const files = await readFilesFromDir();
   const images = sanitizeFileList(files);
-  images.forEach((img) => {
+  const imagesExif = await getExifData(images);
+  imagesExif.forEach((img) => {
     console.log(img);
   });
 };
