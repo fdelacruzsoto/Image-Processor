@@ -36,6 +36,13 @@ const sanitizeFileList = (files) => {
   return imgs;
 };
 
+/**
+ * Loops trough each one of the images and get the exif data for each one.
+ * An object is created with the picture name and the gps data associated
+ * with the image.
+ * @param images Images to get exif data from
+ * @returns {Array} imgs The images and its gps data
+ */
 const getExifData = async (images) => {
   const exifPromises = images.map(async (img) => {
     const exifData = await exif.read(`${FILES_PATH}/${img}`);
