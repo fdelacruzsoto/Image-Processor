@@ -62,6 +62,7 @@ typings/
 
 # Ignore the local images folder since it is too big
 images/
+controlpoints/
 
 # OS
 .DS_Store
