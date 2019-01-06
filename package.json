@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint .",
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_ENV=test nyc mocha --timeout=3000"
   },
   "keywords": [
     "image",
@@ -19,7 +19,9 @@
   "devDependencies": {
     "eslint": "^5.11.1",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0"
+    "eslint-plugin-import": "^2.14.0",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0"
   },
   "dependencies": {
     "@turf/turf": "^5.1.6",
