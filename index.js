@@ -1,6 +1,7 @@
 const csv = require('csvtojson');
 const exif = require('fast-exif');
 const fs = require('fs');
+const moment = require('moment');
 // const cron = require('node-cron');
 const { promisify } = require('util');
 const turf = require('@turf/turf');
@@ -17,6 +18,8 @@ const REGEX_IMAGE = /\.(jpg)$/i;
 
 // We apply promisify to readdir function so that we can use it with async await.
 const readdir = promisify(fs.readdir);
+// We apply promisify to writeFile function so that we can use it with async await.
+const writeFile = promisify(fs.writeFile);
 
 /**
  * Read the files inside the specified path directory, return an array with the files names,
@@ -148,6 +151,11 @@ const calculatePoints = (images, controlPoints) => {
   return controlPointsOutside;
 };
 
+const saveResultToFile = async (data) => {
+  const timestamp = moment().format();
+  await writeFile(`data-${timestamp}.json`, data);
+};
+
 /**
  * Main function used to start processing the images.
  */
@@ -158,7 +166,8 @@ const startProcessing = async () => {
   const gpsDecimalData = degreesToDecimal(imagesExif);
   const contronPoints = await readCsv();
   const finalResult = calculatePoints(gpsDecimalData, contronPoints);
-  console.log(finalResult);
+  const data = JSON.stringify(finalResult);
+  saveResultToFile(data);
 };
 
 startProcessing();
