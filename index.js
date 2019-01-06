@@ -88,11 +88,11 @@ const degreesToDecimal = (imagesData) => {
  */
 const readCsv = async () => {
   const jsonCSV = await csv().fromFile(`${CONTROL_FILE_PATH}/${CONTROL_FILE}`);
-  const data = jsonCSV.map((csv) => {
+  const data = jsonCSV.map((csvEntry) => {
     const csvData = {
-      name: csv.name,
-      lat: csv.lat,
-      lng: csv.lng,
+      name: csvEntry.name,
+      lat: csvEntry.lat,
+      lng: csvEntry.lng,
     };
     return csvData;
   });
