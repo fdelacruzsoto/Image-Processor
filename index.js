@@ -56,13 +56,34 @@ const getExifData = async (images) => {
 };
 
 /**
+ * Loops trough each one of the images and convert the gps data
+ * from degrees to decimal so that we can use turf library
+ * to make calulations
+ * @param imagesData Images and their gps data
+ * @returns {Array} imgs The images and its gps data converted to decimal
+ */
+const degreesToDecimal = (imagesData) => {
+  const imagesDecimalData = imagesData.map((imageData) => {
+    const imageDecimalData = {};
+    imageDecimalData.img = imageData.img;
+    imageDecimalData.lat = imageData.gps.GPSLatitude[0]
+      + (imageData.gps.GPSLatitude[1] / 60) + (imageData.gps.GPSLatitude[2] / 3600);
+    imageDecimalData.lon = imageData.gps.GPSLongitude[0]
+      + (imageData.gps.GPSLongitude[1] / 60) + (imageData.gps.GPSLongitude[2] / 3600);
+    return imageDecimalData;
+  });
+  return imagesDecimalData;
+};
+
+/**
  * Main function used to start processing the images.
  */
 const startProcessing = async () => {
   const files = await readFilesFromDir();
   const images = sanitizeFileList(files);
   const imagesExif = await getExifData(images);
-  imagesExif.forEach((img) => {
+  const gpsDecimalData = degreesToDecimal(imagesExif);
+  gpsDecimalData.forEach((img) => {
     console.log(img);
   });
 };
