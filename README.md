@@ -8,6 +8,8 @@ A simple microservice to process image EXIF metadata and compare it with control
 - [Folder structure](#folder-structure)
 - [Available Scripts](#available-scripts)
   - [npm start](#npm-start)
+  - [npm run lint](#npm-run-lint)
+  - [npm test](#npm-test)
 - [Docker](#docker)
   - [Build the image](#build-the-image)
   - [Run the image](#run-the-image)
@@ -62,6 +64,10 @@ Output should be displayed on the terminal where the script is running.
 ### `npm run lint`
 
 Runs the linter, current rules are based on Airbnb practices.
+
+### `npm test`
+
+Runs the unit tests
 
 ## Docker
 
