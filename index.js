@@ -173,6 +173,11 @@ const startProcessing = async () => {
   saveResultToFile(data);
 };
 
-cron.schedule('* * * * *', () => {
-  startProcessing();
-});
+if (process.env.NODE_ENV !== 'test') {
+  cron.schedule('* * * * *', () => {
+    startProcessing();
+  });
+}
+
+module.exports.readFilesFromDir = readFilesFromDir;
+module.exports.sanitizeFileList = sanitizeFileList;
