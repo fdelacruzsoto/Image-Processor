@@ -21,6 +21,7 @@
     "eslint-plugin-import": "^2.14.0"
   },
   "dependencies": {
+    "csvtojson": "^2.0.8",
     "fast-exif": "^1.0.1",
     "node-cron": "^2.0.3"
   }

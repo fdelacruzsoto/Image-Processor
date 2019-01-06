@@ -1,3 +1,4 @@
+const csv = require('csvtojson');
 const exif = require('fast-exif');
 const fs = require('fs');
 // const cron = require('node-cron');
@@ -5,6 +6,10 @@ const { promisify } = require('util');
 
 // We'll be using this constant to set where the job should look for images.
 const FILES_PATH = './images';
+// We'll be using this constat to set where the job should look for control points.
+const CONTROL_FILE_PATH = './controlpoints';
+// We'll be using this constant to set the control points file name.
+const CONTROL_FILE = 'controlPoints.csv';
 // This constant is used to filter the file list and keep only the images. For simplicity
 // only jpg images will be processed.
 const REGEX_IMAGE = /\.(jpg)$/i;
@@ -65,14 +70,33 @@ const getExifData = async (images) => {
 const degreesToDecimal = (imagesData) => {
   const imagesDecimalData = imagesData.map((imageData) => {
     const imageDecimalData = {};
-    imageDecimalData.img = imageData.img;
+    imageDecimalData.name = imageData.img;
     imageDecimalData.lat = imageData.gps.GPSLatitude[0]
       + (imageData.gps.GPSLatitude[1] / 60) + (imageData.gps.GPSLatitude[2] / 3600);
-    imageDecimalData.lon = imageData.gps.GPSLongitude[0]
+    imageDecimalData.lng = imageData.gps.GPSLongitude[0]
       + (imageData.gps.GPSLongitude[1] / 60) + (imageData.gps.GPSLongitude[2] / 3600);
     return imageDecimalData;
   });
   return imagesDecimalData;
+};
+
+/**
+ * Read the csv file and converts it to a json object.
+ * Note: This can be done in a single line without a function, for consistency
+ * a function is used.
+ * @returns {JSON} jsonCSV A json object with the data from the csv.
+ */
+const readCsv = async () => {
+  const jsonCSV = await csv().fromFile(`${CONTROL_FILE_PATH}/${CONTROL_FILE}`);
+  const data = jsonCSV.map((csv) => {
+    const csvData = {
+      name: csv.name,
+      lat: csv.lat,
+      lng: csv.lng,
+    };
+    return csvData;
+  });
+  return data;
 };
 
 /**
@@ -83,8 +107,13 @@ const startProcessing = async () => {
   const images = sanitizeFileList(files);
   const imagesExif = await getExifData(images);
   const gpsDecimalData = degreesToDecimal(imagesExif);
+  const contronPoints = await readCsv();
   gpsDecimalData.forEach((img) => {
     console.log(img);
+  });
+  console.log('**********');
+  contronPoints.forEach((controlPoint) => {
+    console.log(controlPoint);
   });
 };
 
