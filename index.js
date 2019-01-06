@@ -2,7 +2,7 @@ const csv = require('csvtojson');
 const exif = require('fast-exif');
 const fs = require('fs');
 const moment = require('moment');
-// const cron = require('node-cron');
+const cron = require('node-cron');
 const { promisify } = require('util');
 const turf = require('@turf/turf');
 
@@ -153,13 +153,16 @@ const calculatePoints = (images, controlPoints) => {
 
 const saveResultToFile = async (data) => {
   const timestamp = moment().format();
-  await writeFile(`data-${timestamp}.json`, data);
+  const fileName = `data-${timestamp}.json`;
+  await writeFile(fileName, data);
+  console.log(`${moment().format()} - Images and control points processed, results saved to ${fileName}`);
 };
 
 /**
  * Main function used to start processing the images.
  */
 const startProcessing = async () => {
+  console.log(`${moment().format()} - Start processing images and control points`);
   const files = await readFilesFromDir();
   const images = sanitizeFileList(files);
   const imagesExif = await getExifData(images);
@@ -170,8 +173,6 @@ const startProcessing = async () => {
   saveResultToFile(data);
 };
 
-startProcessing();
-
-/* cron.schedule('* * * * *', () => {
-  processImages();
-}); */
+cron.schedule('* * * * *', () => {
+  startProcessing();
+});
