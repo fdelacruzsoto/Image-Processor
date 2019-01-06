@@ -49,7 +49,8 @@ image-processor/
   README.md
 ```
 
-**Note**: The directories controlpoints/ and images/ are included in .gitignore for simplicity.
+**Note**: The directories controlpoints/ and images/ are included in .gitignore for simplicity. To run the project, those files/dirs 
+should be added manually.
 
 ## Available Scripts
 
