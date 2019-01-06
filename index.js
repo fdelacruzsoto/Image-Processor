@@ -3,6 +3,7 @@ const exif = require('fast-exif');
 const fs = require('fs');
 // const cron = require('node-cron');
 const { promisify } = require('util');
+const turf = require('@turf/turf');
 
 // We'll be using this constant to set where the job should look for images.
 const FILES_PATH = './images';
@@ -100,6 +101,54 @@ const readCsv = async () => {
 };
 
 /**
+ * Process the control points and the data from the images gps.
+ * @param {Array} images Images and their gps data
+ * @param {Array} controlPoints Control points and theri gps data
+ * @returns {Array} controlPointsOutside Control points outside of the drone flying
+ *  area and their gps data.
+ */
+const calculatePoints = (images, controlPoints) => {
+  const imagesGps = images.map((image) => {
+    const gps = [
+      image.lng,
+      image.lat,
+    ];
+    return gps;
+  });
+  const controlGps = controlPoints.map((point) => {
+    const gps = [
+      point.lng,
+      point.lat,
+    ];
+    return gps;
+  });
+  const points = turf.points(controlGps);
+  // Quick hack needed by turf to create the polygon
+  imagesGps.push(imagesGps[0]);
+  const searchWithin = turf.polygon([imagesGps]);
+  const ptsWithin = turf.pointsWithinPolygon(points, searchWithin);
+  const { features } = ptsWithin;
+  const ptsInside = features.map((feature) => {
+    const coordenate = {
+      lat: feature.geometry.coordinates[1],
+      lng: feature.geometry.coordinates[0],
+    };
+    return coordenate;
+  });
+  const processedControlPoints = controlPoints.map((element) => {
+    const pointToProcess = element;
+    ptsInside.forEach((point) => {
+      if (element.lat === point.lat && element.lng === point.lng) {
+        pointToProcess.inside = true;
+      }
+    });
+    return pointToProcess;
+  });
+  const controlPointsOutside = processedControlPoints.filter(point => !point.inside);
+  return controlPointsOutside;
+};
+
+/**
  * Main function used to start processing the images.
  */
 const startProcessing = async () => {
@@ -108,13 +157,8 @@ const startProcessing = async () => {
   const imagesExif = await getExifData(images);
   const gpsDecimalData = degreesToDecimal(imagesExif);
   const contronPoints = await readCsv();
-  gpsDecimalData.forEach((img) => {
-    console.log(img);
-  });
-  console.log('**********');
-  contronPoints.forEach((controlPoint) => {
-    console.log(controlPoint);
-  });
+  const finalResult = calculatePoints(gpsDecimalData, contronPoints);
+  console.log(finalResult);
 };
 
 startProcessing();

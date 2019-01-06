@@ -21,8 +21,10 @@
     "eslint-plugin-import": "^2.14.0"
   },
   "dependencies": {
+    "@turf/turf": "^5.1.6",
     "csvtojson": "^2.0.8",
     "fast-exif": "^1.0.1",
-    "node-cron": "^2.0.3"
+    "node-cron": "^2.0.3",
+    "underscore": "^1.9.1"
   }
 }
